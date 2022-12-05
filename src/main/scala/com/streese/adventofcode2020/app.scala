@@ -68,7 +68,7 @@ def writeCodeFiles(day: Int, overwrite: Boolean): Try[Unit] =
   }
 
 def implementationCode(day: Int): String =
-  s"""|package com.streese.adventofcode2020.day$day%02d
+  f"""|package com.streese.adventofcode2020.day$day%02d
       |
       |def part01(lines: Seq[String]): Unit = ???
       |
@@ -101,8 +101,6 @@ def testCode(day: Int) =
     case Some(config) => run(config)
 
 def run(config: Config): Unit =
-  val dayString = f"${config.day}%02d"
-  println(os.pwd)
   val res = for {
     session <- parseSession(config.sessionFile)
     _       <- createDirectories(config.day)
