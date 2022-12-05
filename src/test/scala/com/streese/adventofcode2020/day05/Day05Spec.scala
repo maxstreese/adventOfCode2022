@@ -4,18 +4,12 @@ import com.streese.adventofcode2020.PuzzlesSpec
 
 class Day05Spec extends PuzzlesSpec(5) {
 
-  "parse" should "parse things correctly" in {
-    val (_, procedure) = parse(lines)
-    println(procedure.last)
-  }
-
   "part01" should "be correct" in {
-    // println(part01(lines))
-    // part01(lines) shouldBe ???
+    part01(lines) shouldBe "TQRFCBSJJ"
   }
 
   "part02" should "be correct" in {
-    // println(part02(lines))
+    println(part02(lines))
     // part02(lines) shouldBe ???
   }
 

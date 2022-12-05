@@ -2,15 +2,15 @@ package com.streese.adventofcode2020.day05
 
 import scala.collection.immutable.Queue
 
-type Crates = Map[Int, List[String]]
+type Stacks = Map[Int, List[String]]
 
 case class Step(amount: Int, from: Int, to: Int)
 
 def parse(lines: Seq[String]) =
-  val (crates, _ :: procedure) = lines.toList.splitAt(lines.indexWhere(_.isBlank)) : @unchecked
-  parseCrates(crates) -> parseProcedure(procedure)
+  val (stacks, _ :: procedure) = lines.toList.splitAt(lines.indexWhere(_.isBlank)) : @unchecked
+  parseStacks(stacks) -> parseProcedure(procedure)
 
-def parseCrates(lines: Seq[String]): Crates =
+def parseStacks(lines: Seq[String]): Stacks =
   lines
     .reverse
     .tail
@@ -41,6 +41,30 @@ def parseProcedure(lines: Seq[String]) =
     Step(amount, from, to)
   }
 
-def part01(lines: Seq[String]): Unit = ???
+def unload(stacks: Stacks, procedure: Seq[Step], reverse: Boolean): Stacks =
+  procedure.foldLeft(stacks) { (stacks, step) =>
+    val toTransfer = stacks.get(step.from).toList.flatMap(_.take(step.amount))
+    val toTransferInOrder = if reverse then toTransfer.reverse else toTransfer
+    stacks
+      .updatedWith(step.from)(_.map(_.drop(step.amount)))
+      .updatedWith(step.to)(_.map(_.prependedAll(toTransferInOrder)))
+  }
 
-def part02(lines: Seq[String]): Unit = ???
+def topOfStacks(stacks: Stacks): String =
+  stacks
+    .toList
+    .sortBy((i, _) => i)
+    .map((_, stack) => stack)
+    .map(_.headOption)
+    .flatten
+    .mkString
+
+def part01(lines: Seq[String]): String =
+  val (stacks, procedure) = parse(lines)
+  val unloadedStacks = unload(stacks, procedure, reverse = true)
+  topOfStacks(unloadedStacks)
+
+def part02(lines: Seq[String]): String =
+  val (stacks, procedure) = parse(lines)
+  val unloadedStacks = unload(stacks, procedure, reverse = false)
+  topOfStacks(unloadedStacks)
