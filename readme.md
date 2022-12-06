@@ -38,3 +38,5 @@ Usage:  [options]
   -o, --overwrite         overwrite any existing files
   -s, --session-file <p>  path to the session cookie file [default: ~/.adventofcode.session]
 ```
+
+The setup code is heavily inspired by [aoc-cli](https://github.com/scarvalhojr/aoc-cli). I just wanted to roll my own in order to customize things a little and also have things more self-contained.
