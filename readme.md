@@ -23,3 +23,18 @@ I would be curious to solve the puzzles with either C or C++ in the future to ge
 ## Structure Of The Repository
 
 I follow the standard convention for JVM languages w.r.t. folder and package naming. You will find the implementation of the solutions in `src/main/scala/com/streese/adventofcode2020/dayXX` folders. I test/run the code via tests in `src/test/scala/com/streese/adventofcode2020/dayXX` folders.
+
+# Setting Up A Day
+
+The repository contains a small app one can use to set up a given day (the below assumes you have [Bloop](https://scalacenter.github.io/bloop/) installed): 
+
+```
+> bloop run adventOfCode2020 -- -h
+Set up any given day and optionally download its input. Existing files are kept.
+Usage:  [options]
+
+  -h, --help
+  -d, --day <d>           the day to set up
+  -o, --overwrite         overwrite any existing files
+  -s, --session-file <p>  path to the session cookie file [default: /home/max/.adventofcode.session]
+```
