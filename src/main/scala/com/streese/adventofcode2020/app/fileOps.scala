@@ -3,15 +3,18 @@ package com.streese.adventofcode2020.app
 import scala.jdk.CollectionConverters._
 import scala.util.Try
 
-lazy val sourceDirectory: os.Path = os.pwd / "src" / "main" / "scala" / "com" / "streese" / "adventofcode2020"
+lazy val implementationDirectory: os.Path =
+  os.pwd / "src" / "main" / "scala" / "com" / "streese" / "adventofcode2020"
 
-lazy val testDirectory: os.Path = os.pwd / "src" / "test" / "scala" / "com" / "streese" / "adventofcode2020"
+lazy val testDirectory: os.Path =
+  os.pwd / "src" / "test" / "scala" / "com" / "streese" / "adventofcode2020"
 
-lazy val resourceDirectory: os.Path = os.pwd / "src" / "test" / "resources"
+lazy val resourceDirectory: os.Path =
+  os.pwd / "src" / "test" / "resources"
 
 def createDirectories(day: Int): Try[Unit] =
   Try {
-    os.makeDir.all(sourceDirectory / f"day$day%02d")
+    os.makeDir.all(implementationDirectory / f"day$day%02d")
     os.makeDir.all(testDirectory / f"day$day%02d")
     os.makeDir.all(resourceDirectory / f"day$day%02d")
   }
@@ -29,7 +32,7 @@ def writeInputFile(day: Int, text: String, overwrite: Boolean): Try[Unit] =
   writeFile(resourceDirectory, day, "input.txt", text, overwrite)
 
 def writeImplementationFile(day: Int, overwrite: Boolean): Try[Unit] =
-  writeFile(resourceDirectory, day, "puzzles.scala", implementationCode(day), overwrite)
+  writeFile(implementationDirectory, day, "puzzles.scala", implementationCode(day), overwrite)
 
 def writeTestFile(day: Int, overwrite: Boolean): Try[Unit] =
-  writeFile(resourceDirectory, day, f"Day$day%02dSpec.scala", testCode(day), overwrite)
+  writeFile(testDirectory, day, f"Day$day%02dSpec.scala", testCode(day), overwrite)
