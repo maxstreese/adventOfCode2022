@@ -36,5 +36,5 @@ Usage:  [options]
   -h, --help
   -d, --day <d>           the day to set up
   -o, --overwrite         overwrite any existing files
-  -s, --session-file <p>  path to the session cookie file [default: /home/max/.adventofcode.session]
+  -s, --session-file <p>  path to the session cookie file [default: ~/.adventofcode.session]
 ```
