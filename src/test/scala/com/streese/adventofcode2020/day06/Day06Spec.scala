@@ -5,13 +5,11 @@ import com.streese.adventofcode2020.PuzzlesSpec
 class Day06Spec extends PuzzlesSpec(6) {
 
   "part01" should "be correct" in {
-    // println(part01(lines))
-    // part01(lines) shouldBe ???
+    part01(lines) shouldBe 1848
   }
 
   "part02" should "be correct" in {
-    // println(part02(lines))
-    // part02(lines) shouldBe ???
+    part02(lines) shouldBe 2308
   }
 
 }
