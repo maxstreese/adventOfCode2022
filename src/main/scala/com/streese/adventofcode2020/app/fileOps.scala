@@ -26,7 +26,7 @@ def writeFile(base: os.Path, day: Int, name: String, text: String, overwrite: Bo
   }
 
 def writeDescriptionFile(day: Int, text: String, overwrite: Boolean): Try[Unit] =
-  writeFile(resourceDirectory, day, "readme.md", text, overwrite)
+  writeFile(resourceDirectory, day, "description.md", text, overwrite)
 
 def writeInputFile(day: Int, text: String, overwrite: Boolean): Try[Unit] =
   writeFile(resourceDirectory, day, "input.txt", text, overwrite)
