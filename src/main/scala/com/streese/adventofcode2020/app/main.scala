@@ -13,8 +13,11 @@ def run(config: Config): Unit =
       _       <- createDirectories(day)
       _       <- writeImplementationFile(day, overwrite)
       _       <- writeTestFile(day, overwrite)
-      _       <- downloadDayDescription(session, day).flatMap(text => writeDescriptionFile(day, text, overwrite))
-      _       <- downloadInput(session, day).flatMap(text => writeInputFile(day, text, overwrite))
+      _       <- downloadDayDescription(session, day)
+                   .flatMap(extractDayDescription)
+                   .flatMap(text => writeDescriptionFile(day, text, overwrite))
+      _       <- downloadInput(session, day)
+                   .flatMap(text => writeInputFile(day, text, overwrite))
     yield ()
   result match
     case Failure(e) => println(e)

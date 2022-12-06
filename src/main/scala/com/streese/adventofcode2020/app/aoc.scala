@@ -24,7 +24,7 @@ def downloadInput(session: String, day: Int): Try[String] =
     requests.get(s"https://adventofcode.com/2022/day/$day/input", headers = headers).text()
   }
 
-def extractDayDescription(text: String) =
+def extractDayDescription(text: String): Try[String] =
   Try {
     val desc = Jsoup
       .parse(text)
