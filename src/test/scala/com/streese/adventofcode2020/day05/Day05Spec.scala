@@ -9,8 +9,7 @@ class Day05Spec extends PuzzlesSpec(5) {
   }
 
   "part02" should "be correct" in {
-    println(part02(lines))
-    // part02(lines) shouldBe ???
+    part02(lines) shouldBe "RMHFJNVFP"
   }
 
 }

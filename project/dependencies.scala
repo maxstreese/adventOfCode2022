@@ -9,16 +9,18 @@ object dependencies {
 
   object versions {
     val osLib     = "0.8.1"
+    val requests  = "0.7.1"
     val scalatest = "3.2.14"
     val scopt     = "4.1.0"
   }
 
   object libs {
     val osLib     = "com.lihaoyi"      %% "os-lib"    % versions.osLib
+    val requests  = "com.lihaoyi"      %% "requests"  % versions.requests
     val scalatest = "org.scalatest"    %% "scalatest" % versions.scalatest
     val scopt     = "com.github.scopt" %% "scopt"     % versions.scopt
   }
 
-  val allDeps: Seq[ModuleID] = compileScope(libs.osLib, libs.scopt) ++ testScope(libs.scalatest)
+  val allDeps: Seq[ModuleID] = compileScope(libs.osLib, libs.requests, libs.scopt) ++ testScope(libs.scalatest)
 
 }
