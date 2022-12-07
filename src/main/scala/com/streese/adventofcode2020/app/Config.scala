@@ -34,6 +34,7 @@ object Config:
       opt[Seq[AocFile]]('f', "files")
         .required()
         .valueName("<d>")
+        .withFallback(() => Seq(AocFile.All))
         .action((x, c) => c.copy(files = x))
         .text(AocFile.cliDescription),
       opt[Unit]('o', "overwrite")
