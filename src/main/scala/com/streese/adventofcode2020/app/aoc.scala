@@ -29,7 +29,7 @@ def extractDayDescription(text: String): Try[String] =
     val desc = Jsoup
       .parse(text)
       .body
-      .getElementsByClass("day-desc")
+      .getElementsByTag("main")
       .asScala
       .head
     FlexmarkHtmlConverter.builder.build.convert(desc)
