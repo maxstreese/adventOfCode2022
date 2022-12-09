@@ -6,11 +6,11 @@ import scala.collection.mutable
 class Day09Spec extends PuzzlesSpec(9) {
 
   "part01" should "be correct" in {
-    part01(lines) shouldBe 6181
+    part01(input) shouldBe 6181
   }
 
   "part02" should "be correct" in {
-    part02(lines) shouldBe 2386
+    part02(input) shouldBe 2386
   }
 
 }

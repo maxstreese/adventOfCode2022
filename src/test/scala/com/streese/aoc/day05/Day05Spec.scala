@@ -5,11 +5,11 @@ import com.streese.aoc.PuzzlesSpec
 class Day05Spec extends PuzzlesSpec(5) {
 
   "part01" should "be correct" in {
-    part01(lines) shouldBe "TQRFCBSJJ"
+    part01(input) shouldBe "TQRFCBSJJ"
   }
 
   "part02" should "be correct" in {
-    part02(lines) shouldBe "RMHFJNVFP"
+    part02(input) shouldBe "RMHFJNVFP"
   }
 
 }

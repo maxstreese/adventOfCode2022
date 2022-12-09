@@ -7,11 +7,11 @@ import org.scalatest.matchers.should.Matchers
 class Day01Spec extends PuzzlesSpec(1) {
 
   "part01" should "be correct" in {
-    part01(lines) shouldBe 69795
+    part01(input) shouldBe 69795
   }
 
   "part02" should "be correct" in {
-    part02(lines) shouldBe 208437
+    part02(input) shouldBe 208437
   }
 
 }
