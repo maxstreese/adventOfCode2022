@@ -14,35 +14,57 @@ case class Point(x: Int, y: Int):
     case Move.Right => Point(x + 1, y    )
     case Move.Up    => Point(x    , y + 1)
     case Move.Down  => Point(x    , y - 1)
+  def keepInTouchWith(h: Point): Point =
+    val t     = this
+    val xDiff = h.x - t.x
+    val yDiff = h.y - t.y
+    (xDiff, yDiff) match
+      case (x, y) if x <= -2 && y <= -1 => Point(t.x - 1, t.y - 1)
+      case (-2,  0) => Point(t.x - 1, t.y    )
+      case (x, y) if x <= -2 && y >= 1 => Point(t.x - 1, t.y + 1)
+      case (x, y) if x <= -1 && y <= -2 => Point(t.x - 1, t.y - 1)
+      case (x, y) if x <= -1 && y >= 2 => Point(t.x - 1, t.y + 1)
+      case (0,  -2) => Point(t.x    , t.y - 1)
+      case (0,   2) => Point(t.x    , t.y + 1)
+      case (x, y) if x >= 1 && y <= -2 => Point(t.x + 1, t.y - 1)
+      case (x, y) if x >= 1 && y >= 2 => Point(t.x + 1, t.y + 1)
+      case (x, y) if x >= 2 && y <= -1 => Point(t.x + 1, t.y - 1)
+      case (2,   0) => Point(t.x + 1, t.y    )
+      case (x, y) if x >= 2 && y >= 1 => Point(t.x + 1, t.y + 1)
+      case _        =>
+        if xDiff > 2 || yDiff > 2 then
+          println(xDiff)
+          println(yDiff)
+        t
 
 object Point:
   def apply(): Point = Point(0, 0)
 
 case class Rope(h: Point, t: Point):
-  def calcT(hn: Point): Point =
-    val xDiff = hn.x - t.x
-    val yDiff = hn.y - t.y
-    (xDiff, yDiff) match
-      case (-2, -1) => Point(t.x - 1, t.y - 1)
-      case (-2,  0) => Point(t.x - 1, t.y    )
-      case (-2,  1) => Point(t.x - 1, t.y + 1)
-      case (-1, -2) => Point(t.x - 1, t.y - 1)
-      case (-1,  2) => Point(t.x - 1, t.y + 1)
-      case (0,  -2) => Point(t.x    , t.y - 1)
-      case (0,   2) => Point(t.x    , t.y + 1)
-      case (1,  -2) => Point(t.x + 1, t.y - 1)
-      case (1,   2) => Point(t.x + 1, t.y + 1)
-      case (2,  -1) => Point(t.x + 1, t.y - 1)
-      case (2,   0) => Point(t.x + 1, t.y    )
-      case (2,   1) => Point(t.x + 1, t.y + 1)
-      case _        => t
   def move(m: Move): Rope =
     val hn = h.move(m)
-    val tn = calcT(hn)
+    val tn = t.keepInTouchWith(hn)
     Rope(hn, tn)
 
 object Rope:
   def apply(): Rope = Rope(Point(), Point())
+
+opaque type ManyRope = mutable.ListBuffer[Point]
+
+object ManyRope:
+  def apply(size: Int): ManyRope =
+    mutable.ListBuffer.fill(size)(Point())
+
+extension (xs: ManyRope)
+  def move(m: Move): Unit =
+    val size = xs.size
+    var i = 0
+    while i < size do
+      val x = xs(i)
+      if i == 0 then xs.update(i, x.move(m))
+      else xs.update(i, x.keepInTouchWith(xs(i-1)))
+      i += 1
+  def last: Point = xs.last
 
 object Move:
   def parse(s: String): Seq[Move] =
@@ -63,4 +85,12 @@ def part01(lines: Seq[String]): Int =
   }
   visited.toSet.size
 
-def part02(lines: Seq[String]): Unit = ???
+def part02(lines: Seq[String]): Int =
+  val moves   = parse(lines)
+  val rope    = ManyRope(10)
+  val visited = mutable.ListBuffer(Point(0, 0))
+  moves.foreach { m =>
+    rope.move(m)
+    visited += rope.last
+  }
+  visited.toSet.size

@@ -1,6 +1,7 @@
 package com.streese.aoc.day09
 
 import com.streese.aoc.PuzzlesSpec
+import scala.collection.mutable
 
 class Day09Spec extends PuzzlesSpec(9) {
 
@@ -9,8 +10,7 @@ class Day09Spec extends PuzzlesSpec(9) {
   }
 
   "part02" should "be correct" in {
-    // println(part02(lines))
-    // part02(lines) shouldBe ???
+    part02(lines) shouldBe 2386
   }
 
 }
