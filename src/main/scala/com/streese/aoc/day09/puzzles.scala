@@ -62,9 +62,8 @@ object Move:
 def parse(lines: Seq[String]): Seq[Move] =
   lines.map(Move.parse).flatten
 
-def part01(lines: Seq[String]): Int =
-  val moves   = parse(lines)
-  val rope    = Rope(2)
+def solve(knotCount: Int, moves: Seq[Move]): Int =
+  val rope    = Rope(knotCount)
   val visited = mutable.ListBuffer(Point(0, 0))
   moves.foreach { m =>
     rope.move(m)
@@ -72,12 +71,10 @@ def part01(lines: Seq[String]): Int =
   }
   visited.toSet.size
 
+def part01(lines: Seq[String]): Int =
+  val moves = parse(lines)
+  solve(2, moves)
+
 def part02(lines: Seq[String]): Int =
-  val moves   = parse(lines)
-  val rope    = Rope(10)
-  val visited = mutable.ListBuffer(Point(0, 0))
-  moves.foreach { m =>
-    rope.move(m)
-    visited += rope.last
-  }
-  visited.toSet.size
+  val moves = parse(lines)
+  solve(10, moves)
