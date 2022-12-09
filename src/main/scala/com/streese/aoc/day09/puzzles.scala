@@ -19,43 +19,30 @@ case class Point(x: Int, y: Int):
     val xDiff = h.x - t.x
     val yDiff = h.y - t.y
     (xDiff, yDiff) match
-      case (x, y) if x <= -2 && y <= -1 => Point(t.x - 1, t.y - 1)
-      case (-2,  0) => Point(t.x - 1, t.y    )
-      case (x, y) if x <= -2 && y >= 1 => Point(t.x - 1, t.y + 1)
-      case (x, y) if x <= -1 && y <= -2 => Point(t.x - 1, t.y - 1)
-      case (x, y) if x <= -1 && y >= 2 => Point(t.x - 1, t.y + 1)
-      case (0,  -2) => Point(t.x    , t.y - 1)
-      case (0,   2) => Point(t.x    , t.y + 1)
-      case (x, y) if x >= 1 && y <= -2 => Point(t.x + 1, t.y - 1)
-      case (x, y) if x >= 1 && y >= 2 => Point(t.x + 1, t.y + 1)
-      case (x, y) if x >= 2 && y <= -1 => Point(t.x + 1, t.y - 1)
-      case (2,   0) => Point(t.x + 1, t.y    )
-      case (x, y) if x >= 2 && y >= 1 => Point(t.x + 1, t.y + 1)
-      case _        =>
-        if xDiff > 2 || yDiff > 2 then
-          println(xDiff)
-          println(yDiff)
-        t
+      case (-2,  0)                       => Point(t.x - 1, t.y    )
+      case (0 , -2)                       => Point(t.x    , t.y - 1)
+      case (0 ,  2)                       => Point(t.x    , t.y + 1)
+      case (2 ,  0)                       => Point(t.x + 1, t.y    )
+      case (x,   y) if x <= -2 && y <= -1 => Point(t.x - 1, t.y - 1)
+      case (x,   y) if x <= -2 && y >=  1 => Point(t.x - 1, t.y + 1)
+      case (x,   y) if x <= -1 && y <= -2 => Point(t.x - 1, t.y - 1)
+      case (x,   y) if x <= -1 && y >=  2 => Point(t.x - 1, t.y + 1)
+      case (x,   y) if x >=  1 && y <= -2 => Point(t.x + 1, t.y - 1)
+      case (x,   y) if x >=  1 && y >=  2 => Point(t.x + 1, t.y + 1)
+      case (x,   y) if x >=  2 && y <= -1 => Point(t.x + 1, t.y - 1)
+      case (x,   y) if x >=  2 && y >=  1 => Point(t.x + 1, t.y + 1)
+      case _                              => t
 
 object Point:
   def apply(): Point = Point(0, 0)
 
-case class Rope(h: Point, t: Point):
-  def move(m: Move): Rope =
-    val hn = h.move(m)
-    val tn = t.keepInTouchWith(hn)
-    Rope(hn, tn)
+opaque type Rope = mutable.ListBuffer[Point]
 
 object Rope:
-  def apply(): Rope = Rope(Point(), Point())
-
-opaque type ManyRope = mutable.ListBuffer[Point]
-
-object ManyRope:
-  def apply(size: Int): ManyRope =
+  def apply(size: Int): Rope =
     mutable.ListBuffer.fill(size)(Point())
 
-extension (xs: ManyRope)
+extension (xs: Rope)
   def move(m: Move): Unit =
     val size = xs.size
     var i = 0
@@ -77,17 +64,17 @@ def parse(lines: Seq[String]): Seq[Move] =
 
 def part01(lines: Seq[String]): Int =
   val moves   = parse(lines)
-  var rope    = Rope()
+  val rope    = Rope(2)
   val visited = mutable.ListBuffer(Point(0, 0))
   moves.foreach { m =>
-    rope     = rope.move(m)
-    visited += rope.t
+    rope.move(m)
+    visited += rope.last
   }
   visited.toSet.size
 
 def part02(lines: Seq[String]): Int =
   val moves   = parse(lines)
-  val rope    = ManyRope(10)
+  val rope    = Rope(10)
   val visited = mutable.ListBuffer(Point(0, 0))
   moves.foreach { m =>
     rope.move(m)
