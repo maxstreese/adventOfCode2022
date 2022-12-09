@@ -9,8 +9,8 @@ ThisBuild / scalacOptions ++= List(
   "-Ywarn-unused",
 )
 
-lazy val adventOfCode2020 = (project in file("."))
+lazy val aoc = (project in file("."))
   .settings(
-    name                 := "adventofcode2020",
+    name                 := "aoc",
     libraryDependencies ++= allDeps
   )
