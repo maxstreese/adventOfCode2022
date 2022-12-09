@@ -16,7 +16,7 @@ The same can be said about the efficiency of the solutions.
 
 ### Language And Development Environment
 
-As I am writing this, I am using Scala 3 as my language, SBT as my build tool and VS Code as my IDE. So far (day 3) I have been sticking to a functional style to solve the puzzles. This is most notable by the abscence of loops.
+As I am writing this, I am using Scala 3 as my language, SBT as my build tool and VS Code as my IDE.
 
 I would be curious to solve the puzzles with either C or C++ in the future to get better at solving coding challenges in a more procedural style, closer to the machine and with more emphasis on performance. I have to admit to myself that I have become quite reliant on Scala's high level of abstraction and the power of it's standard library (most of all the collections).
 
@@ -29,12 +29,13 @@ I follow the standard convention for JVM languages w.r.t. folder and package nam
 The repository contains a small app one can use to set up a given day (the below assumes you have [Bloop](https://scalacenter.github.io/bloop/) installed): 
 
 ```
-> bloop run aoc -- -h
+$ bloop run aoc -- --help
 Set up any given day and optionally download its input. Existing files are kept.
 Usage:  [options]
 
   -h, --help
   -d, --day <d>           the day to set up
+  -f, --files <d>         possible values: all,desc,input,test,impl [default: all]
   -o, --overwrite         overwrite any existing files
   -s, --session-file <p>  path to the session cookie file [default: ~/.adventofcode.session]
 ```
