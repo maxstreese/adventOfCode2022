@@ -10,7 +10,6 @@ enum Instruction:
     this match
       case Instruction.AddX(i) => i
       case Instruction.NoOp()  => 0
-  
 
 object Instruction:
   def parse(line: String): Instruction =
@@ -53,7 +52,11 @@ def solvePart02(instructions: Seq[Instruction]) =
   xRegHist(instructions)
     .grouped(40)
     .map(_.zipWithIndex)
+    .take(6)
     .toList
+    .map(_.map((x, i) => if (x-i).abs < 2 then "█" else " "))
+    .map(_.mkString)
+    .mkString("\n")
 
 def part02(lines: Seq[String]) =
   lines.map(Instruction.parse).pipe(solvePart02)
