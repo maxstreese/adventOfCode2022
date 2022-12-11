@@ -3,9 +3,9 @@ package com.streese.aoc.app
 def implementationCode(day: Int): String =
   f"""|package com.streese.aoc.day$day%02d
       |
-      |def part01(input: Seq[String]): Unit = ???
+      |def part01(input: Seq[String]) = ???
       |
-      |def part02(input: Seq[String]): Unit = ???
+      |def part02(input: Seq[String]) = ???
       |""".stripMargin
 
 def testCode(day: Int) =
