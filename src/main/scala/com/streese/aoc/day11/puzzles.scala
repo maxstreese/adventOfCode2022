@@ -80,19 +80,15 @@ def simulateRounds(
   monkeys: mutable.SortedMap[Int, Monkey],
   adjust:  BigInt => BigInt
 ): Seq[Map[Int, Monkey]] =
-  // val lcm = BigInt(96577)
-  val lcm = BigInt(9699690)
   (0 until rounds).map { _ =>
     for (i, monkey) <- monkeys do
       monkey.items.foreach { item =>
         monkeys(i) = monkey.copy(items = List.empty, inspected = monkey.inspected + monkey.items.length)
-        val updatedItem = monkey.operation.calc(item)
-        val mod = updatedItem % lcm
-        val check = updatedItem % monkey.divisor == 0
-        val itemToSend = if mod == 0 then monkey.divisor else mod
-        val iToSendTo = if check then monkey.ifTrue else monkey.ifFalse
-        val toSendTo = monkeys(iToSendTo)
-        val toSendToUpdated = toSendTo.copy(items = toSendTo.items.appended(itemToSend))
+        val updatedItem     = adjust(monkey.operation.calc(item))
+        val check           = updatedItem % monkey.divisor == 0
+        val iToSendTo       = if check then monkey.ifTrue else monkey.ifFalse
+        val toSendTo        = monkeys(iToSendTo)
+        val toSendToUpdated = toSendTo.copy(items = toSendTo.items.appended(updatedItem))
         monkeys.update(iToSendTo, toSendToUpdated)
       }
     monkeys.toMap
@@ -112,7 +108,7 @@ def solve(n: Int, monkeys: mutable.SortedMap[Int, Monkey], adjust: BigInt => Big
 def part01(input: Seq[String]): BigInt =
   parse(input).pipe(solve(20, _, _ / 3L))
 
-def part02(input: Seq[String]) =
+def part02(input: Seq[String]): BigInt =
   val monkeys = parse(input)
   val checkLcm = lcm(monkeys.values.map(_.divisor).toList)
   def adjust(i: BigInt): BigInt =
