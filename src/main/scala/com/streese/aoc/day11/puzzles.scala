@@ -111,7 +111,4 @@ def part01(input: Seq[String]): BigInt =
 def part02(input: Seq[String]): BigInt =
   val monkeys = parse(input)
   val checkLcm = lcm(monkeys.values.map(_.divisor).toList)
-  def adjust(i: BigInt): BigInt =
-    val mod = i % checkLcm
-    if mod == 0 then i else mod
-  solve(10000, monkeys, adjust)
+  solve(10000, monkeys, _ % checkLcm)
