@@ -1,6 +1,7 @@
 package com.streese.aoc.day12
 
 import scala.collection.mutable
+import scala.util.chaining.*
 
 case class Point(r: Int, c: Int, l: Location)
 
@@ -22,11 +23,18 @@ object Location:
       case 'E' => End
       case c   => Step(c.height)
 
-def parse(lines: Seq[String]): (Point, Array[Array[Point]]) =
+case class Input(
+  start:     Point,
+  least:     Set[Point],
+  heightMap: Array[Array[Point]],
+)
+
+def parse(lines: Seq[String]): Input =
   val input     = lines.map(_.toArray).toArray
   val maxR      = input.length
   val maxC      = input(0).length
   var start     = Point(0, 0, Location.Start)
+  val least     = mutable.ListBuffer.empty[Point]
   val heightMap = Array.ofDim[Point](maxR, maxC)
   var (r, c)    = (0, 0)
   while r < maxR do
@@ -35,17 +43,18 @@ def parse(lines: Seq[String]): (Point, Array[Array[Point]]) =
       val char     = input(r)(c)
       val location = Location.parse(char)
       val point    = Point(r, c, location)
+      if char.height == 'a'.height then least.append(point)
       if location == Location.Start then start = point
       heightMap(r)(c) = point
       c += 1
     r += 1
-  start -> heightMap
+  Input(start, least.toSet, heightMap)
 
-def calculatePaths(start: Point, hm: Array[Array[Point]]): List[List[Point]] =
+def calculatePaths(start: Point, visitedBefore: Set[Point], hm: Array[Array[Point]]): List[List[Point]] =
   val maxR    = hm.length
   val maxC    = hm(0).length
   val paths   = mutable.ListBuffer.empty[List[Point]]
-  val visited = mutable.Map.empty[Point, Int]
+  val visited = mutable.Map(visitedBefore.map(v => v -> 0).toSeq: _*)
   def recur(curr: Point, acc: List[Point]): Unit =
     val newAcc     = acc.prepended(curr)
     var keepGoing  = false
@@ -87,11 +96,27 @@ def calculatePaths(start: Point, hm: Array[Array[Point]]): List[List[Point]] =
       visited.put(curr, accLen)
       keepGoing = true
       recur(hm(curr.r)(curr.c + 1), newAcc)
-    // if !keepGoing && newAcc.head.l == Location.End then paths.append(newAcc)
-    if !keepGoing then paths.append(newAcc)
+    if !keepGoing && newAcc.head.l == Location.End then paths.append(newAcc)
   recur(start, List.empty)
   paths.toList
 
-def part01(input: Seq[String]) = ???
+def fewestSteps(paths: List[List[Point]]): Int =
+  val min = paths
+    .filter(_.map(_.l).contains(Location.End))
+    .map(_.size)
+    .min
+  min - 1
 
-def part02(input: Seq[String]) = ???
+def part01(input: Seq[String]): Int =
+  parse(input)
+    .pipe(parsedInput => calculatePaths(parsedInput.start, Set.empty, parsedInput.heightMap))
+    .pipe(fewestSteps)
+
+def part02(input: Seq[String]): Int =
+  val parsedInput = parse(input)
+  val seenBefore  = mutable.ListBuffer.empty[Point]
+  val paths       = mutable.ListBuffer.empty[List[Point]]
+  parsedInput.least.foreach { start =>
+    paths.appendAll(calculatePaths(start, seenBefore.toSet, parsedInput.heightMap))
+  }
+  fewestSteps(paths.toList)
