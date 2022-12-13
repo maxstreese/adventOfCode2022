@@ -1,14 +1,19 @@
 package com.streese.aoc.day13
 
 import com.streese.aoc.PuzzlesSpec
+import scala.util.chaining._
 
 class Day13Spec extends PuzzlesSpec(13) {
 
   "something" should "work" in {
-    // val tokens = Token.parse("[1,1,3,1,1]")
-    val tokens = Token.parse("[[1],[2,3,4]]")
-    val packet = Packet.parse(tokens)
-    pprint.pprintln(packet)
+    pprint.pprintln(Token.parse("[[[]]]").pipe(Packet.parse))
+    // example
+    //   .filterNot(_.isBlank)
+    //   .map(_.toList.toSeq)
+    //   .take(12)
+    //   .map(Token.parse)
+    //   .map(Packet.parse)
+    //   .foreach(pprint.pprintln(_))
   }
 
   "part01" should "be correct" in {
