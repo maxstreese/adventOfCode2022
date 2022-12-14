@@ -6,14 +6,11 @@ import scala.util.chaining._
 class Day13Spec extends PuzzlesSpec(13) {
 
   "something" should "work" in {
-    pprint.pprintln(Token.parse("[[[]]]").pipe(Packet.parse))
-    // example
-    //   .filterNot(_.isBlank)
-    //   .map(_.toList.toSeq)
-    //   .take(12)
-    //   .map(Token.parse)
-    //   .map(Packet.parse)
-    //   .foreach(pprint.pprintln(_))
+    // val (l, r) = ("[1,1,3,1,1]".packet, "[1,1,5,1,1]".packet)
+    val (l, r) = ("[[1],[2,3,4]]".packet, "[[1],4]".packet)
+    // val (l, r) = ("[1]".packet, "[4,1]".packet)
+    println(l.isSmaller(r))
+    // parse(example).map(_.compare).foreach(println)
   }
 
   "part01" should "be correct" in {
