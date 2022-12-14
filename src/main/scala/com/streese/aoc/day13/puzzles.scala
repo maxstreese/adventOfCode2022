@@ -41,22 +41,22 @@ enum Packet:
     this match
       case Packet.L(elems) => "[" ++ elems.map(_.toString).mkString(",") ++ "]"
       case Packet.N(i) => i.toString
-  private def isSmaller(l: List[Packet], r: List[Packet]): Boolean =
+  private def isSmaller(l: List[Packet], r: List[Packet], i: Boolean): Boolean =
     l match
       case lh :: lt => 
         r match
-          case rh :: rt => lh.isSmaller(rh) && isSmaller(lt, rt)
+          case rh :: rt => if i then lh.isSmaller(rh) else lh.isSmaller(rh) && isSmaller(lt, rt, false)
           case Nil      => false
       case Nil => true
   def isSmaller(right: Packet): Boolean =
     this match
       case Packet.L(ll) =>
         right match
-          case Packet.L(lr) => isSmaller(ll, lr)
-          case nr: Packet.N => isSmaller(ll, List(nr))
+          case Packet.L(lr) => isSmaller(ll, lr, false)
+          case nr: Packet.N => isSmaller(ll, List(nr), true)
       case nl @ Packet.N(il) =>
         right match
-          case Packet.L(lr) => isSmaller(List(nl), lr)
+          case Packet.L(lr) => isSmaller(List(nl), lr, true)
           case Packet.N(ir) => il <= ir
 
 object Packet:
@@ -113,6 +113,7 @@ def parse(input: Seq[String]): Seq[Input] =
     .map((l, r) => Input(Packet.parse(Token.parse(l)), Packet.parse(Token.parse(r))))
     .toSeq
 
-def part01(input: Seq[String]) = ???
+def part01(input: Seq[String]): Int =
+  parse(input).map(_.compare).zipWithIndex.filter((p, _) => p).map((_, i) => i + 1).sum
 
 def part02(input: Seq[String]) = ???
