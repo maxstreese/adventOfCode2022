@@ -41,23 +41,34 @@ enum Packet:
     this match
       case Packet.L(elems) => "[" ++ elems.map(_.toString).mkString(",") ++ "]"
       case Packet.N(i) => i.toString
-  private def isSmaller(l: List[Packet], r: List[Packet], i: Boolean): Boolean =
+  private def isSmaller(l: List[Packet], r: List[Packet]): (Boolean, Boolean) =
     l match
       case lh :: lt => 
         r match
-          case rh :: rt => if i then lh.isSmaller(rh) else lh.isSmaller(rh) && isSmaller(lt, rt, false)
-          case Nil      => false
-      case Nil => true
+          case rh :: rt =>
+            val (s, c) = lh.isSmallerImpl(rh)
+            if c then isSmaller(lt, rt) else (s, c)
+          case Nil => (false, false)
+      case Nil =>
+        r match
+          case _ :: _ => (true, false)
+          case Nil => (true, true)
   def isSmaller(right: Packet): Boolean =
+    isSmallerImpl(right)._1
+  private def isSmallerImpl(right: Packet): (Boolean, Boolean) =
     this match
       case Packet.L(ll) =>
         right match
-          case Packet.L(lr) => isSmaller(ll, lr, false)
-          case nr: Packet.N => isSmaller(ll, List(nr), true)
+          case Packet.L(lr) => isSmaller(ll, lr)
+          case nr: Packet.N => isSmaller(ll, List(nr))
       case nl @ Packet.N(il) =>
         right match
-          case Packet.L(lr) => isSmaller(List(nl), lr, true)
-          case Packet.N(ir) => il <= ir
+          case Packet.L(lr) => isSmaller(List(nl), lr)
+          case Packet.N(ir) =>
+            il.compare(ir) match
+              case -1 => (true, false)
+              case  0 => (true, true)
+              case  1 => (false, false)
 
 object Packet:
   def parse(tokens: Seq[Token]): Packet =
@@ -99,10 +110,10 @@ object Packet:
 extension (s: String)
   def packet: Packet = Packet.parse(Token.parse(s))
 
-case class Input(l: Packet, r: Packet):
+case class Pair(l: Packet, r: Packet):
   def compare: Boolean = l.isSmaller(r)
 
-def parse(input: Seq[String]): Seq[Input] =
+def parsePart01(input: Seq[String]): Seq[Pair] =
   input
     .grouped(3)
     .map(_.take(2).toList)
@@ -110,10 +121,21 @@ def parse(input: Seq[String]): Seq[Input] =
       case h :: t :: Nil => Some(h, t)
       case _             => None
     }
-    .map((l, r) => Input(Packet.parse(Token.parse(l)), Packet.parse(Token.parse(r))))
+    .map((l, r) => Pair(Packet.parse(Token.parse(l)), Packet.parse(Token.parse(r))))
     .toSeq
 
-def part01(input: Seq[String]): Int =
-  parse(input).map(_.compare).zipWithIndex.filter((p, _) => p).map((_, i) => i + 1).sum
+def parsePart02(input: Seq[String]): Seq[Packet] =
+  parsePart01(input).flatMap(p => Seq(p.l, p.r))
 
-def part02(input: Seq[String]) = ???
+def part01(input: Seq[String]): Int =
+  parsePart01(input).map(_.compare).zipWithIndex.filter((p, _) => p).map((_, i) => i + 1).sum
+
+def part02(input: Seq[String]): Int =
+  val divOne = "[[2]]".packet
+  val divTwo = "[[6]]".packet
+  val sorted = parsePart02(input)
+    .appendedAll(Seq(divOne, divTwo))
+    .sortWith((a, b) => a.isSmaller(b))
+  val divOneI = sorted.indexOf(divOne) + 1
+  val divTwoI = sorted.indexOf(divTwo) + 1
+  divOneI * divTwoI
