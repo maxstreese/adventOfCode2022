@@ -6,14 +6,8 @@ import scala.util.chaining._
 
 class Day14Spec extends PuzzlesSpec(14) {
 
-  "" should "" in {
-    val x = parse(example).pipe(Tilemap(_))
-    println(x.sandDropped)
-  }
-
   "part01" should "be correct" in {
-    // println(part01(input))
-    // part01(input) shouldBe ???
+    part01(input) shouldBe 638
   }
 
   "part02" should "be correct" in {
