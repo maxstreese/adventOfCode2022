@@ -8,7 +8,7 @@ class Day14Spec extends PuzzlesSpec(14) {
 
   "" should "" in {
     val x = parse(example).pipe(Tilemap(_))
-    println(x.draw(0))
+    println(x.sandDropped)
   }
 
   "part01" should "be correct" in {
