@@ -11,8 +11,7 @@ class Day14Spec extends PuzzlesSpec(14) {
   }
 
   "part02" should "be correct" in {
-    // println(part02(input))
-    // part02(input) shouldBe ???
+    part02(input) shouldBe 31722
   }
 
 }

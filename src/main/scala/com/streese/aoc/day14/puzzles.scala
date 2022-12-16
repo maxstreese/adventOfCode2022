@@ -17,7 +17,12 @@ enum Tile:
 
 import Tile.*
 
-class Tilemap(rocks: Seq[RockLine], drops: Option[Int] = None) {
+class Tilemap(
+  rocks:           Seq[RockLine]       ,
+  drops:           Option[Int]   = None,
+  usePathTracking: Boolean       = true,
+  withFloor:       Boolean       = true,
+) {
 
   private val dropChar = '+'
   private val rockChar = '#'
@@ -26,36 +31,36 @@ class Tilemap(rocks: Seq[RockLine], drops: Option[Int] = None) {
 
   private val minX = rocks.flatMap(_.map(_.x)).min
   private val maxX = rocks.flatMap(_.map(_.x)).max
-  private val minY = 0
-  private val maxY = rocks.flatMap(_.map(_.y)).max
+  private val maxY = rocks.flatMap(_.map(_.y)).max + (if withFloor then 2 else 0)
 
-  private val xDist = maxX - minX + 1
-  private val yDist = maxY - minY + 1
+  val marginX     = if withFloor then maxY + 1 else 0
+  val adjustmentX = -minX + marginX
 
-  private val dropFrom = Point(500 - minX, 0)
+  private val xDist = marginX * 2 + maxX - minX + 1
+  private val yDist = maxY + 1
+
+  private val dropFrom = Point(500 + adjustmentX, 0)
 
   private val tm = Array.fill(xDist)(Array.fill(yDist)(Air))
 
   tm(dropFrom.x)(dropFrom.y) = Drop
 
-  rocks
+  private val adjustedRocks = rocks.map(_.map(p => Point(p.x + adjustmentX, p.y)))
+
+  adjustedRocks
     .map(line => line.zip(line.tail))
     .foreach(_.foreach { (a, b) =>
-      tm(a.x - minX)(a.y - minY) = Rock
-      tm(b.x - minX)(b.y - minY) = Rock
+      tm(a.x)(a.y) = Rock
+      tm(b.x)(b.y) = Rock
       val xDiff = b.x - a.x
       val yDiff = b.y - a.y
-      ((0 until xDiff) ++ (xDiff until 0)).foreach { x => 
-        val px = a.x + x - minX
-        val py = a.y - minY
-        tm(a.x + x - minX)(a.y - minY) = Rock
-      }
-      ((0 until yDiff) ++ (yDiff until 0)).foreach { y =>
-        val px = a.x - minX
-        val py = a.y + y - minY
-        tm(a.x - minX)(a.y + y - minY) = Rock
-      }
+      ((0 until xDiff) ++ (xDiff until 0)).foreach(x => tm(a.x + x)(a.y) = Rock)
+      ((0 until yDiff) ++ (yDiff until 0)).foreach(y => tm(a.x)(a.y + y) = Rock)
     })
+
+  if withFloor then (0 until xDist).foreach(x => tm(x)(maxY) = Rock)
+
+  private val path = mutable.ListBuffer.empty[Point]
 
   private def checkTile(p: Point): Option[Tile] =
     if p.x < 0 || p.x > maxX || p.y < 0 || p.y > maxY then None
@@ -70,13 +75,13 @@ class Tilemap(rocks: Seq[RockLine], drops: Option[Int] = None) {
       val right      = checkTile(p.right)
       val rightBelow = checkTile(p.rightBelow)
       if      here.isEmpty                then false
-      else if below.forall(_ == Air)      then go(p.below)
-      else if leftBelow.forall(_ == Air)  then go(p.leftBelow)
-      else if rightBelow.forall(_ == Air) then go(p.rightBelow)
-      else
-        tm(p.x)(p.y) = Sand
-        true
-    go(dropFrom)
+      else if here.exists(_ == Sand)      then false
+      else if below.forall(_ == Air)      then { if usePathTracking then path.prepend(p); go(p.below)      }
+      else if leftBelow.forall(_ == Air)  then { if usePathTracking then path.prepend(p); go(p.leftBelow)  }
+      else if rightBelow.forall(_ == Air) then { if usePathTracking then path.prepend(p); go(p.rightBelow) }
+      else                                     { tm(p.x)(p.y) = Sand; true }
+    val start = if usePathTracking && path.length > 0 then path.remove(0) else dropFrom
+    go(start)
 
   val sandDropped: Int =
     var i = 0
@@ -85,7 +90,7 @@ class Tilemap(rocks: Seq[RockLine], drops: Option[Int] = None) {
         while drop do
           i += 1
       case Some(max) =>
-        while i < max + 1 && drop do
+        while i < max && drop do
           i += 1
     i
 
@@ -119,6 +124,7 @@ def parse(input: Seq[String]): Seq[RockLine] =
     }
 
 def part01(input: Seq[String]): Int =
-  parse(input).pipe(Tilemap(_)).sandDropped
+  parse(input).pipe(Tilemap(_, withFloor = false)).sandDropped
 
-def part02(input: Seq[String]) = ???
+def part02(input: Seq[String]): Int =
+  parse(input).pipe(Tilemap(_, withFloor = true)).sandDropped
