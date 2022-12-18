@@ -6,6 +6,11 @@ import scala.util.chaining._
 
 class Day15Spec extends PuzzlesSpec(15) {
 
+  "" should "" in {
+    // val res = parse(input).pipe(solvePart01(2000000, _))
+    // pprint.pprintln(res)
+  }
+
   "part01" should "be correct" in {
     part01(input) shouldBe 5508234
   }
